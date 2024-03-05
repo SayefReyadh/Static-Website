@@ -1,17 +1,91 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>About - Sayef Reyadh's Website</title>
-    <link rel="stylesheet" type="text/css" href="css/styles.css">
-</head>
-<body>
-    <h1>About Sayef Reyadh</h1>
-    <p>This is the about page.</p>
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nunc et pellentesque.</p>
-    <div class="image-container">
-        <img src="https://picsum.photos/1080/720?random=2" alt="Random Image">
-    </div>
-    <a href="index.html">Home</a>
-    <script src="js/script.js"></script>
-</body>
+	<head>
+		<title>About - Sayef Reyadh's Website</title>
+		<link rel="stylesheet" type="text/css" href="css/styles.css" />
+	</head>
+	<body>
+		<h1>About Sayef Reyadh</h1>
+		<p>This is the about page.</p>
+		<p>
+			Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nunc
+			et pellentesque.
+		</p>
+		<div class="image-container">
+			<img src="https://picsum.photos/1080/720?random=2" alt="Random Image" />
+		</div>
+		<a href="index.html">Home</a>
+		<script src="js/script.js"></script>
+		<script src="https://unpkg.com/@optimizely/optimizely-sdk@3.2.0/dist/optimizely.browser.umd.min.js"></script>
+		<script type="text/javascript">
+			(function () {
+				//Helper to get cookie value
+				function getCookie(name) {
+					var v = document.cookie.match("(^|;) ?" + name + "=([^;]*)(;|$)");
+					return v ? v[2] : null;
+				}
+
+				//Helper to get query param value
+				function getParameterByName(field, url) {
+					var href = url ? url : window.location.href;
+					var reg = new RegExp("[?&]" + field + "=([^&#]*)", "i");
+					var string = reg.exec(href);
+					return string ? string[1] : null;
+				}
+
+				//Helper to return snippet url
+				function getSnippetURL(projectId) {
+					var protocol =
+						window.location.protocol === "http:" ? "http:" : "https:";
+
+					return protocol + "//cdn.optimizely.com/js/" + projectId + ".js";
+				}
+
+				//Helper to set cookie
+				function setCookie(name, value, days) {
+					var d = new Date();
+					d.setTime(d.getTime() + 24 * 60 * 60 * 1000 * days);
+					document.cookie =
+						name + "=" + value + ";path=/;expires=" + d.toGMTString();
+				}
+
+				//Setup default project for www.atticandbutton.us
+				var COOKIE_EXPIRATION = 365,
+					COOKIE_NAME = "optimizelyProjectId",
+					DEFAULT_PROJECT = "8167681053",
+					PROJECT_PARAMETER = "pid";
+
+				var newProjectId = getParameterByName(PROJECT_PARAMETER);
+
+				//Check to see if project id parameter is on URL
+				if (newProjectId) {
+					setCookie(COOKIE_NAME, newProjectId, COOKIE_EXPIRATION);
+				}
+
+				var projectId = getCookie(COOKIE_NAME) || DEFAULT_PROJECT;
+
+				// Talk to @andreas (formerly @jon) if you need to change this!
+				if (window.location.host === "www.atticandbutton.com") {
+					/***
+              ANDREAS: DO NOT MODIFY THE CONTENT BELOW WITHOUT TALKING TO ANDREAS
+                     Discussed with Jon Noronha, ADEPT should use www.atticandbutton.us, GTM will use www.atticandbutton.com
+                         This site is used across the GTM teams for demos in a retail environment
+            */
+					//Setup new default snippet for .com
+					var DEFAULT_PROJECT = "8167681053",
+						projectId = getCookie(COOKIE_NAME) || DEFAULT_PROJECT,
+						snippetURL = getSnippetURL(projectId);
+				} else if (getParameterByName("snippet") == "dynamic") {
+					var userId = "jon";
+					var sourceUrl = window.location.href;
+					snippetURL = `http://jon.ocdndns.com/snippet/11948621098/snippet.js?user_id=${userId}&url=${sourceUrl}`;
+				} else {
+					var snippetURL = getSnippetURL(projectId);
+				}
+
+				//Dynamically writing snippet
+				document.write("<scr" + 'ipt src="' + snippetURL + '"></scr' + "ipt>");
+			})();
+		</script>
+	</body>
 </html>
